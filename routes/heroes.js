@@ -6,7 +6,20 @@ const router = express.Router();
 router.get("/", function (req, res) {
     // res.send("Hello,heroes api ");
     console.log("[API]:GET /heroes--->", );
-    res.send(heroesModel.heroes)
+    if(req.query.name){
+        console.log('query string...', req.query);
+        heroesModel.searchHero(req.query)
+            .then((searchResults)=>{
+                console.log('serachResults---', searchResults);
+                res.status(200).send(searchResults);
+            })
+            .catch((err)=>{
+                console.log('ERROR-->',err);
+                res.status(400).send(err);
+            })
+    }else{
+        res.send(heroesModel.heroes)
+    }
 });
 
 router.put('/', (req, res) => {
@@ -18,6 +31,7 @@ router.put('/', (req, res) => {
                 res.status(200).send(updatedHero);
             })
             .catch((err) => {
+                console.log('error',err);
                 res.status(400).send(err);
             })
     } else {
@@ -50,6 +64,7 @@ router.get('/:id', function (req, res) {
             res.status(200).send(hero);
         })
         .catch((err) => {
+            console.log('error',err)
             res.status(404).send(err);
         })
 })
@@ -65,6 +80,11 @@ router.delete('/:id',(req, res)=>{
             console.log('error', err);
             res.status(404).send(err);
         })
+})
+
+router.get('/search',(req, res)=>{
+    console.log('[API]:GET /heroes/search--->name=', req.query);
+    res.send();
 })
 
 module.exports = router;
